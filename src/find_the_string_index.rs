@@ -3,35 +3,48 @@ pub fn str_str(haystack: String, needle: String) -> i32 {
         return -1;
     }
 
-    let mut find_index: Option<i32> = None;
-    let mut current_index = 0;
-    let mut chars = needle.chars();
-    let mut haystack_chars = haystack.chars();
-    let needle_char = chars.next().unwrap();
+    let mut i = 0;
 
-    while current_index < haystack.len() {
-        if let Some(char) = haystack_chars.next() {
-            if find_index.is_none() {
-                if char == needle_char {
-                    find_index = Some(current_index as i32);
-                }
-            } else {
-                if let Some(mut needle_char) = chars.next() {
-                    if char != needle_char {
-                        current_index = find_index.unwrap() as usize + 1;
-                        find_index = None;
-                        chars = needle.chars();
-                        haystack_chars = haystack.chars();
-                        haystack_chars.nth(current_index - 1);
-                        needle_char = chars.next().unwrap();
-                        continue;
-                    }
-                }
+    while i <= (haystack.len() - needle.len()) {
+        if let Some(p) = haystack.get(i..needle.len() + i) {
+            if p == needle {
+                return i as i32;
             }
+            i += 1;
+        } else {
+            return -1;
         }
-
-        current_index = current_index + 1;
     }
 
-    find_index.unwrap_or(-1)
+    return -1;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn first() {
+        assert_eq!(str_str("sadbutsad".to_string(), "sad".to_string()), 0);
+    }
+
+    #[test]
+    fn second() {
+        assert_eq!(str_str("leetcode".to_string(), "leeto".to_string()), -1);
+    }
+
+    #[test]
+    fn third() {
+        assert_eq!(str_str("hello".to_string(), "ll".to_string()), 2);
+    }
+
+    #[test]
+    fn fourth() {
+        assert_eq!(str_str("abc".to_string(), "c".to_string()), 2);
+    }
+
+    #[test]
+    fn fifth() {
+        assert_eq!(str_str("mississippi".to_string(), "pi".to_string()), 9);
+    }
 }
